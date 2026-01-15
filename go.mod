@@ -1,4 +1,4 @@
-module github.com/go-vgo/robotgo
+module github.com/hightemp/robotgo
 
 go 1.24.0
 
@@ -14,6 +14,8 @@ require (
 	github.com/vcaesar/screenshot v0.11.1
 	github.com/vcaesar/tt v0.20.1
 )
+
+require github.com/go-vgo/robotgo v1.0.0
 
 require (
 	github.com/dblohm7/wingoes v0.0.0-20250822163801-6d8e6105c62d // indirect
