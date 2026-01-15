@@ -34,6 +34,36 @@ func GetClient(pid int, args ...int) (int, int, int, int) {
 	return internalGetClient(pid, isPid)
 }
 
+// MoveWindow move the window to new position
+func MoveWindow(pid, x, y int, args ...int) {
+	var isPid int
+	if len(args) > 0 || NotPid {
+		isPid = 1
+	}
+
+	internalMoveWindow(pid, x, y, isPid)
+}
+
+// ResizeWindow resize the window
+func ResizeWindow(pid, width, height int, args ...int) {
+	var isPid int
+	if len(args) > 0 || NotPid {
+		isPid = 1
+	}
+
+	internalResizeWindow(pid, width, height, isPid)
+}
+
+// SetWindowBounds set window position and size
+func SetWindowBounds(pid, x, y, width, height int, args ...int) {
+	var isPid int
+	if len(args) > 0 || NotPid {
+		isPid = 1
+	}
+
+	internalSetWindowBounds(pid, x, y, width, height, isPid)
+}
+
 // internalGetTitle get the window title
 func internalGetTitle(pid int, args ...int) string {
 	var isPid int

@@ -12,6 +12,12 @@
 #include "alert_c.h"
 #include "window.h"
 #include "win_sys.h"
+#include "move_resize.h"
+
+void move_window(uintptr pid, int32_t x, int32_t y, int8_t isPid);
+void resize_window(uintptr pid, int32_t width, int32_t height, int8_t isPid);
+void set_window_bounds(uintptr pid, int32_t x, int32_t y,
+	int32_t width, int32_t height, int8_t isPid);
 
 void min_window(uintptr pid, bool state, int8_t isPid){
 	#if defined(IS_MACOSX)

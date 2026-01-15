@@ -1066,6 +1066,19 @@ func CloseWindow(args ...int) {
 	C.close_window_by_PId(C.uintptr(pid), C.int8_t(isPid))
 }
 
+func internalMoveWindow(pid, x, y, isPid int) {
+	C.move_window(C.uintptr(pid), C.int32_t(x), C.int32_t(y), C.int8_t(isPid))
+}
+
+func internalResizeWindow(pid, width, height, isPid int) {
+	C.resize_window(C.uintptr(pid), C.int32_t(width), C.int32_t(height), C.int8_t(isPid))
+}
+
+func internalSetWindowBounds(pid, x, y, width, height, isPid int) {
+	C.set_window_bounds(C.uintptr(pid), C.int32_t(x), C.int32_t(y),
+		C.int32_t(width), C.int32_t(height), C.int8_t(isPid))
+}
+
 // SetHandle set the window handle
 func SetHandle(hwnd int) {
 	chwnd := C.uintptr(hwnd)
