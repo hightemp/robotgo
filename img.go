@@ -153,10 +153,12 @@ func val(p *uint8, n int) uint8 {
 
 func copyToVUint8A(dst []uint8, src *uint8) {
 	for i := 0; i <= len(dst)-4; i += 4 {
-		dst[i] = val(src, i+2)
-		dst[i+1] = val(src, i+1)
-		dst[i+2] = val(src, i)
-		dst[i+3] = val(src, i+3)
+		dst[i] = val(src, i+2)   // R <- B (BGR to RGB swap)
+		dst[i+1] = val(src, i+1) // G <- G
+		dst[i+2] = val(src, i)   // B <- R (BGR to RGB swap)
+		// X11 returns BGRX format where X is padding (always 0), not alpha.
+		// Set alpha to 255 (fully opaque) to ensure the image is visible.
+		dst[i+3] = 255
 	}
 }
 
