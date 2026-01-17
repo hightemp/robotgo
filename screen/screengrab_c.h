@@ -104,17 +104,24 @@ MMBitmapRef copyMMBitmapFromDisplayInRect(MMRectInt32 rect, int32_t display_id, 
 #elif defined(USE_X11)
 	MMBitmapRef bitmap;
 	Display *display;
+	int shouldCloseDisplay = 0;
 	if (display_id == -1) {
 		display = XOpenDisplay(NULL);
+		shouldCloseDisplay = 1; // Only close if we opened a new display
 	} else {
 		display = XGetMainDisplay();
+		// Don't close XGetMainDisplay() - it's a shared/cached display
 	}
+
+	if (display == NULL) { return NULL; }
 
 	MMPointInt32 o = rect.origin; MMSizeInt32 s = rect.size;
 	XImage *image = XGetImage(display, XDefaultRootWindow(display), 
 							(int)o.x, (int)o.y, (unsigned int)s.w, (unsigned int)s.h, 
 							AllPlanes, ZPixmap);
-	XCloseDisplay(display);
+	if (shouldCloseDisplay) {
+		XCloseDisplay(display);
+	}
 	if (image == NULL) { return NULL; }
 
 	bitmap = createMMBitmap_c((uint8_t *)image->data, 
