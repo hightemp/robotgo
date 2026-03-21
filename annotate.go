@@ -184,32 +184,68 @@ func drawText(img *image.RGBA, x, y int, text string, c color.RGBA) {
 	d.DrawString(text)
 }
 
-// drawCursor draws the red crosshair + label at image-local coords (cx,cy).
+// drawCursor draws a high-contrast crosshair + label at image-local coords (cx,cy).
 // mx,my are the absolute screen coords shown in the label.
+//
+// Design: classic sniper-style crosshair —
+//   • White shadow/outline drawn first (wider) so the cursor is visible on any background
+//   • Red arms drawn on top
+//   • 6 px gap in the centre for precision aiming
+//   • White ring + red dot at centre
 func drawCursor(img *image.RGBA, cx, cy, mx, my int) {
 	b := img.Bounds()
 
-	crossColor := color.RGBA{R: 220, G: 0, B: 0, A: 200} // semi-transparent red
-	solidRed := color.RGBA{R: 255, G: 0, B: 0, A: 255}
+	outlineColor := color.RGBA{R: 255, G: 255, B: 255, A: 230} // white shadow
+	crossColor   := color.RGBA{R: 220, G: 30, B: 30, A: 255}   // fully-opaque red
+	centerColor  := color.RGBA{R: 255, G: 60, B: 60, A: 255}   // bright red dot
 
-	armLen := 22
-	thickness := 3
+	armLen    := 28
+	thickness := 5
+	gap       := 6 // gap around the centre point
+	outline   := 1 // extra pixels for the white halo
 
-	// Horizontal arm
-	for t := -(thickness / 2); t <= thickness/2; t++ {
-		drawHLine(img, cy+t, cx-armLen, cx+armLen, crossColor)
+	totalThick := thickness + 2*outline
+
+	// ── white halo (drawn first, wider) ──────────────────────────────────────
+
+	// horizontal halo
+	for t := -(totalThick / 2); t <= totalThick/2; t++ {
+		drawHLine(img, cy+t, cx-armLen, cx-gap, outlineColor)
+		drawHLine(img, cy+t, cx+gap+1, cx+armLen, outlineColor)
 	}
-	// Vertical arm
-	for t := -(thickness / 2); t <= thickness/2; t++ {
-		drawVLine(img, cx+t, cy-armLen, cy+armLen, crossColor)
+	// vertical halo
+	for t := -(totalThick / 2); t <= totalThick/2; t++ {
+		drawVLine(img, cx+t, cy-armLen, cy-gap, outlineColor)
+		drawVLine(img, cx+t, cy+gap+1, cy+armLen, outlineColor)
 	}
 
-	// Solid centre circle (radius 4)
-	r := 4
-	for dy := -r; dy <= r; dy++ {
-		for dx := -r; dx <= r; dx++ {
-			if dx*dx+dy*dy <= r*r {
-				blendPixel(img, cx+dx, cy+dy, solidRed)
+	// ── red arms (on top, narrower) ───────────────────────────────────────────
+
+	for t := -(thickness / 2); t <= thickness/2; t++ {
+		drawHLine(img, cy+t, cx-armLen, cx-gap, crossColor)
+		drawHLine(img, cy+t, cx+gap+1, cx+armLen, crossColor)
+	}
+	for t := -(thickness / 2); t <= thickness/2; t++ {
+		drawVLine(img, cx+t, cy-armLen, cy-gap, crossColor)
+		drawVLine(img, cx+t, cy+gap+1, cy+armLen, crossColor)
+	}
+
+	// ── centre: white ring (r=7) then red dot (r=4) ───────────────────────────
+
+	rOut := 7
+	rIn  := 4
+	for dy := -rOut; dy <= rOut; dy++ {
+		for dx := -rOut; dx <= rOut; dx++ {
+			dist := dx*dx + dy*dy
+			if dist <= rOut*rOut && dist >= rIn*rIn {
+				blendPixel(img, cx+dx, cy+dy, outlineColor)
+			}
+		}
+	}
+	for dy := -rIn; dy <= rIn; dy++ {
+		for dx := -rIn; dx <= rIn; dx++ {
+			if dx*dx+dy*dy <= rIn*rIn {
+				blendPixel(img, cx+dx, cy+dy, centerColor)
 			}
 		}
 	}
