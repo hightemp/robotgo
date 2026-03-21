@@ -13,6 +13,7 @@ require (
 	github.com/vcaesar/keycode v0.10.1
 	github.com/vcaesar/screenshot v0.11.1
 	github.com/vcaesar/tt v0.20.1
+	golang.org/x/image v0.33.0
 )
 
 require github.com/go-vgo/robotgo v1.0.0
@@ -31,7 +32,6 @@ require (
 	github.com/tklauser/numcpus v0.11.0 // indirect
 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
 	golang.org/x/exp v0.0.0-20251125195548-87e1e737ad39 // indirect
-	golang.org/x/image v0.33.0 // indirect
 	golang.org/x/sys v0.38.0 // indirect
 )
 
